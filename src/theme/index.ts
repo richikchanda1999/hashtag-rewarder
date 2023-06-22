@@ -8,6 +8,13 @@ const theme = extendTheme({
         body: [arvo.style.fontFamily, gloria.style.fontFamily],
         heading: arvo.style.fontFamily,
     },
+    // Set the colors like this
+    colors: {
+        brand: {
+            400: '#1db227',
+            500: '#ABFE2C',
+        }
+    }
 });
 
 
