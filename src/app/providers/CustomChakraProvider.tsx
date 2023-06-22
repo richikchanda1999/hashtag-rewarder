@@ -3,6 +3,7 @@
 
 import { CacheProvider } from '@chakra-ui/next-js'
 import { ChakraProvider } from '@chakra-ui/react'
+import theme from 'src/theme'
 
 export function CustomChakraProvider({ 
     children 
@@ -11,7 +12,7 @@ export function CustomChakraProvider({
   }) {
   return (
     <CacheProvider>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         {children}
       </ChakraProvider>
     </CacheProvider>

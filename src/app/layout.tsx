@@ -1,5 +1,10 @@
+'use client';
+
 // app/layout.tsx
+import { Flex } from "@chakra-ui/react";
 import { CustomChakraProvider } from "src/app/providers/CustomChakraProvider";
+import NavigationBar from "src/components/NavigationBar";
+import { WalletProvider } from "src/app/providers/WalletProvider";
 
 export default function RootLayout({
   children,
@@ -9,9 +14,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <CustomChakraProvider>
-          {children}
-        </CustomChakraProvider>
+        <WalletProvider>
+          <CustomChakraProvider>
+            <Flex direction={'column'} w='100vw' h='100vh'>
+              <NavigationBar />
+              {children}
+            </Flex>
+          </CustomChakraProvider>
+        </WalletProvider>
       </body>
     </html>
   );
