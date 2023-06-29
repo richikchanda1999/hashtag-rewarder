@@ -1,13 +1,15 @@
 "use client";
 
-import { Button, Flex, Image } from "@chakra-ui/react";
+import { Flex, Image } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { formatAddress } from "src/utils";
-import { useAccount, useConnect } from "wagmi";
+import { CHAIN_ID, formatAddress } from "src/utils";
+import { useAccount, useConnect, useNetwork, useSwitchNetwork } from "wagmi";
 
-function ConnectWalletButton() {
+function SignInToLensButton() {
     const { address, isConnected } = useAccount()
-    const { connect, connectors } = useConnect()
+    const { connectAsync, connectors } = useConnect()
+    const { chain } = useNetwork()
+    const { switchNetwork } = useSwitchNetwork()
 
     const [hasMounted, setHasMounted] = useState(false)
 
@@ -15,28 +17,40 @@ function ConnectWalletButton() {
         setHasMounted(true)
     }, [])
 
-    const connectWallet = () => {
+    const connectWallet = async () => {
+        let res = undefined
         try {
-            connect({ connector: connectors[0] })
-        } catch (e1) {
+            res = await connectAsync({ connector: connectors[0] })
+            console.log(res)
+        } catch (e1: any) {
             console.log('Could not connect to Metamask, connecting to some browser wallet (if present)')
             try {
-                connect({ connector: connectors[1] })
+                res = await connectAsync({ connector: connectors[1] })
             } catch (e2) {
                 console.log('Could not connect to any browser wallet')
             }
         }
+        
+        console.log(res?.chain.id, CHAIN_ID)
     }
 
+    useEffect(() => {
+        if (!chain || !switchNetwork) return
+
+        if (chain.id !== CHAIN_ID) {
+            switchNetwork(CHAIN_ID)
+        }
+    }, [chain, switchNetwork])
+
     const component = () => (
-        <Button onClick={connectWallet}>
-            {!isConnected && "Connect "}
-            {!isConnected && <Image ml={1} src="/metamask.svg" alt="metamask-icon" boxSize={"18px"} />}
+        <Flex cursor={'pointer'} onClick={connectWallet}>
+            {!isConnected && "Sign in to "}
+            {!isConnected && <Image ml={1} src="/lens.svg" alt="lens-icon" boxSize={"18px"} />}
             {(isConnected && address) && formatAddress(address)}
-        </Button>
+        </Flex>
     );
 
     return hasMounted ? component() : null;
 }
 
-export default ConnectWalletButton;
+export default SignInToLensButton;
