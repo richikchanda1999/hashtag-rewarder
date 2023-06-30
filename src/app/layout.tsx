@@ -1,7 +1,7 @@
 'use client';
 
 // app/layout.tsx
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { CustomChakraProvider } from "src/app/providers/CustomChakraProvider";
 import NavigationBar from "src/components/NavigationBar";
 import { WalletProvider } from "src/app/providers/WalletProvider";
@@ -21,7 +21,7 @@ export default function RootLayout({
             <SearchProvider>
               <Flex direction={'column'} w='100vw' h='100vh'>
                 <NavigationBar />
-                {children}
+                <Flex h='calc(100vh - 144px)'>{children}</Flex>
                 <FooterBar />
               </Flex>
             </SearchProvider>

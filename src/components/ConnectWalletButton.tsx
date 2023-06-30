@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { CHAIN_ID, formatAddress } from "src/utils";
 import { useAccount, useConnect, useNetwork, useSwitchNetwork } from "wagmi";
 
-function SignInToLensButton() {
+function ConnectWalletButton() {
     const { address, isConnected } = useAccount()
     const { connectAsync, connectors } = useConnect()
     const { chain } = useNetwork()
@@ -43,9 +43,9 @@ function SignInToLensButton() {
     }, [chain, switchNetwork])
 
     const component = () => (
-        <Flex cursor={'pointer'} onClick={connectWallet}>
-            {!isConnected && "Sign in to "}
-            {!isConnected && <Image ml={1} src="/lens.svg" alt="lens-icon" boxSize={"18px"} />}
+        <Flex cursor={'pointer'} onClick={connectWallet} align={'center'}>
+            {!isConnected && "Connect "}
+            {!isConnected && <Image ml={1} src="/metamask.svg" alt="metamask-icon" boxSize={"18px"} />}
             {(isConnected && address) && formatAddress(address)}
         </Flex>
     );
@@ -53,4 +53,4 @@ function SignInToLensButton() {
     return hasMounted ? component() : null;
 }
 
-export default SignInToLensButton;
+export default ConnectWalletButton;
