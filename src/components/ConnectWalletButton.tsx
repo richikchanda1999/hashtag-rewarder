@@ -2,51 +2,64 @@
 
 import { Flex, Image } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { CHAIN_ID, formatAddress } from "src/utils";
-import { useAccount, useConnect, useNetwork, useSwitchNetwork } from "wagmi";
+import { formatAddress } from "src/utils";
 
 function ConnectWalletButton() {
-    const { address, isConnected } = useAccount()
-    const { connectAsync, connectors } = useConnect()
-    const { chain } = useNetwork()
-    const { switchNetwork } = useSwitchNetwork()
-
     const [hasMounted, setHasMounted] = useState(false)
+    const [currentAccount, setCurrentAccount] = useState("")
 
     useEffect(() => {
         setHasMounted(true)
     }, [])
 
     const connectWallet = async () => {
-        let res = undefined
         try {
-            res = await connectAsync({ connector: connectors[0] })
-            console.log(res)
-        } catch (e1: any) {
-            console.log('Could not connect to Metamask, connecting to some browser wallet (if present)')
-            try {
-                res = await connectAsync({ connector: connectors[1] })
-            } catch (e2) {
-                console.log('Could not connect to any browser wallet')
+            //@ts-ignore
+            const { ethereum } = window
+            if (!ethereum) {
+                alert("Get MetaMask!")
+                return
             }
+            const accounts = await ethereum.request({
+                method: "eth_requestAccounts"
+            })
+            console.log("Connected", accounts[0])
+            setCurrentAccount(accounts[0])
+        } catch (error) {
+            console.log(error)
         }
-        
-        console.log(res?.chain.id, CHAIN_ID)
+    }
+
+    const checkIfWalletIsConnected = async () => {
+        //@ts-ignore
+        const { ethereum } = window
+
+        if (!ethereum) {
+            console.log("Make sure you have metamask!")
+            return
+        } else {
+            console.log("We have the ethereum object", ethereum)
+        }
+
+        const accounts = await ethereum.request({ method: "eth_accounts" })
+        if (accounts.length !== 0) {
+            const account = accounts[0]
+            console.log("Found an authorized account:", account)
+            setCurrentAccount(account)
+        } else {
+            console.log("No authorized account found")
+        }
     }
 
     useEffect(() => {
-        if (!chain || !switchNetwork) return
-
-        if (chain.id !== CHAIN_ID) {
-            switchNetwork(CHAIN_ID)
-        }
-    }, [chain, switchNetwork])
+        checkIfWalletIsConnected()
+    }, [])
 
     const component = () => (
         <Flex cursor={'pointer'} onClick={connectWallet} align={'center'}>
-            {!isConnected && "Connect "}
-            {!isConnected && <Image ml={1} src="/metamask.svg" alt="metamask-icon" boxSize={"18px"} />}
-            {(isConnected && address) && formatAddress(address)}
+            {!currentAccount && "Connect "}
+            {!currentAccount && <Image ml={1} src="/metamask.svg" alt="metamask-icon" boxSize={"18px"} />}
+            {(currentAccount) && formatAddress(currentAccount)}
         </Flex>
     );
 

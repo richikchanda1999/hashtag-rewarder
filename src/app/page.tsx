@@ -6,6 +6,8 @@ import ResponsiveText from "src/components/ResponsiveText";
 import { gloria } from "src/theme/fonts";
 import { SearchContext } from "./providers/SearchProvider";
 import PostCard from "src/components/PostCard";
+import { RewardProvider } from "./providers/RewardProvider";
+import { ActionSidebar } from "src/components/ActionSidebar";
 
 const Home: FC = () => {
   const { state, dispatch } = useContext(SearchContext)!
@@ -45,14 +47,17 @@ const Home: FC = () => {
         </Flex>
       </Flex>
       {
-        state.state === 'SUCCESS' && <Flex w='100%' mt={10} overflow={'clip'}>
-          <Flex w='20%'/>
-          <Flex direction={'column'} px={4} gap={4} overflowY={'auto'} w='80%'>{
-            state.value.items.map((post) => {
-              return <PostCard key={post.id} post={post} />
-            })
-          }</Flex>
-        </Flex>
+        state.state === 'SUCCESS' &&
+          <RewardProvider>
+            <Flex w='100%' mt={10} overflow={'clip'}>
+              <ActionSidebar />
+              <Flex direction={'column'} px={4} gap={4} overflowY={'auto'} w='80%'>{
+                state.value.items.map((post) => {
+                  return <PostCard key={post.id} post={post} />
+                })
+              }</Flex>
+            </Flex>
+          </RewardProvider>
       }
     </Flex>
   );

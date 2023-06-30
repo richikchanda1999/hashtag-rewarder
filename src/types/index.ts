@@ -23,3 +23,12 @@ export type SearchContextType = {
     state: SearchState;
     dispatch: Dispatch<SearchAction>;
 }
+
+export type RewardState = {[key: string]: {post: CommentFragment | PostFragment, value: boolean}}
+
+export type RewardAction = {id: string, post: CommentFragment | PostFragment, checked: boolean}
+
+export type RewardContextType = {
+    state: RewardState,
+    dispatch: Dispatch<RewardAction>
+}
